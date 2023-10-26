@@ -1,0 +1,152 @@
+//Aim of the program: Write a menu driven program to sort list of array elements using Merge 
+//Sort technique and calculate the execution time only to sort the elements. Count the number of 
+//comparisons.
+// 
+// To calculate execution time, assume that single program is under execution in the CPU.
+// Number of elements in each input file should vary from 300 to 500 entries. 
+// For ascending order: Read data from a file “inAsce.dat” having content 10 20 30 40….., 
+//Store the result in “outMergeAsce.dat”.
+// For descending order: Read data from a file “inDesc.dat” having content 90 80 70 60…., 
+//Store the result in “outMergeDesc.dat”.
+// For random data: Read data from a file “inRand.dat” having content 55 66 33 11 44 …, 
+//Store the result in “outMergeRand.dat”
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+
+void merge(int arr[], int left, int middle, int right, int *comparisons) {
+    int n1 = middle - left + 1;
+    int n2 = right - middle;
+
+    int leftArray[n1], rightArray[n2];
+
+    for (int i = 0; i < n1; i++) {
+        leftArray[i] = arr[left + i];
+    }
+    for (int i = 0; i < n2; i++) {
+        rightArray[i] = arr[middle + 1 + i];
+    }
+
+    int i = 0, j = 0, k = left;
+
+    while (i < n1 && j < n2) {
+        (*comparisons)++;
+        if (leftArray[i] <= rightArray[j]) {
+            arr[k] = leftArray[i];
+            i++;
+        } else {
+            arr[k] = rightArray[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = leftArray[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = rightArray[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(int arr[], int left, int right, int *comparisons) {
+    if (left < right) {
+        int middle = left + (right - left) / 2;
+
+        mergeSort(arr, left, middle, comparisons);
+        mergeSort(arr, middle + 1, right, comparisons);
+
+        merge(arr, left, middle, right, comparisons);
+    }
+}
+
+void displayArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int choice;
+    int size;
+    struct timespec start, end;
+
+    while (1) {
+        printf("MAIN MENU (MERGE SORT)\n");
+        printf("1. Ascending Data\n");
+        printf("2. Descending Data\n");
+        printf("3. Random Data\n");
+        printf("4. EXIT\n");
+        printf("Enter option: ");
+        scanf("%d", &choice);
+
+        if (choice == 4) {
+            break;
+        }
+
+        char *inputFileName, *outputFileName;
+
+        if (choice == 1) {
+            inputFileName = "inAsce.txt";
+            outputFileName = "outAsce.dat";
+        } else if (choice == 2) {
+            inputFileName = "inDesc.txt";
+            outputFileName = "outDesc.txt";
+        } else if (choice == 3) {
+            inputFileName = "inRand.txt";
+            outputFileName = "outRand.txt";
+        } else {
+            printf("Invalid choice.\n");
+            continue;
+        }
+
+        FILE *inputFile = fopen(inputFileName, "r");
+        FILE *outputFile = fopen(outputFileName, "w");
+
+        if (inputFile == NULL || outputFile == NULL) {
+            printf("Error opening files.\n");
+            continue;
+        }
+
+        printf("enter the size of the array\n");
+        scanf("%d",&size);
+        int arr[100];
+        int comparisons = 0;
+
+        for (int i = 0; i < size; i++) {
+            fscanf(inputFile, "%d", &arr[i]);
+        }
+
+        printf("Before Sorting: ");
+        displayArray(arr, size);
+
+        clock_gettime(CLOCK_REALTIME, &start);
+
+        mergeSort(arr, 0, size - 1, &comparisons);
+
+        clock_gettime(CLOCK_REALTIME, &end);
+
+        long long elapsed_ns = (end.tv_sec - start.tv_sec) * 1000000000 + end.tv_nsec - start.tv_nsec;
+
+        printf("After Sorting: ");
+        displayArray(arr, size);
+        printf("Number of Comparisons: %d\n", comparisons);
+        printf("Execution Time: %lld nanoseconds\n", elapsed_ns);
+
+        for (int i = 0; i < size; i++) {
+            fprintf(outputFile, "%d ", arr[i]);
+        }
+
+        fclose(inputFile);
+        fclose(outputFile);
+    }
+
+    return 0;
+}
