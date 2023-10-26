@@ -1,0 +1,96 @@
+//Write a program in C to convert the first „n‟ decimal numbers of a disc
+//file to binary using recursion. Store the binary value in a separate disc file. 
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to convert a decimal number to binary using recursion
+int convertDecimalToBinary(int decimalNumber) {
+  // If the decimal number is equal to zero, return 0
+  if (decimalNumber == 0) {
+    return 0;
+  }
+
+  // Get the remainder of the decimal number after dividing by 2
+  int remainder = decimalNumber % 2;
+
+  // Recursively convert the quotient of the decimal number after dividing by 2 to binary
+  int binaryNumber = convertDecimalToBinary(decimalNumber / 2);
+
+  // Return the binary number by appending the remainder to the end
+  return (binaryNumber << 1) | remainder;
+}
+
+// Function to write the binary representation of a number to a disc file
+void writeBinaryToFile(int binaryNumber, FILE *file) {
+  // Write the binary number to the file, one bit at a time
+  while (binaryNumber > 0) {
+    int bit = binaryNumber % 2;
+    fprintf(file, "%d", bit);
+    binaryNumber /= 2;
+  }
+
+  // Write a newline character to the file
+  fprintf(file, "\n");
+}
+
+int main(int argc, char *argv[]) {
+  // Check if the user has provided the required command line arguments
+  if (argc != 4) {
+    printf("Usage: %s <n> <source_file> <destination_file>\n", argv[0]);
+    return 1;
+  }
+
+  // Get the value of n, the source file name, and the destination file name from the command line arguments
+  int n = atoi(argv[1]);
+  char *sourceFileName = argv[2];
+  char *destinationFileName = argv[3];
+
+  // Open the source file and the destination file
+  FILE *sourceFile = fopen(sourceFileName, "r");
+  FILE *destinationFile = fopen(destinationFileName, "w");
+
+  // Check if the source file could be opened
+  if (sourceFile == NULL) {
+    printf("Error: Could not open source file \"%s\"\n", sourceFileName);
+    return 1;
+  }
+
+  // Check if the destination file could be opened
+  if (destinationFile == NULL) {
+    printf("Error: Could not open destination file \"%s\"\n", destinationFileName);
+    return 1;
+  }
+
+  // Read the decimal numbers from the source file one by one
+  for (int i = 0; i < n; i++) {
+    int decimalNumber;
+    fscanf(sourceFile, "%d", &decimalNumber);
+
+    // Convert the decimal number to binary using recursion
+    int binaryNumber = convertDecimalToBinary(decimalNumber);
+
+    // Write the binary representation of the number to the destination file
+    writeBinaryToFile(binaryNumber, destinationFile);
+  }
+
+  // Close the source file and the destination file
+  fclose(sourceFile);
+  fclose(destinationFile);
+
+  // Display the decimal numbers and their equivalent binary numbers from the output file
+  printf("The contents of the output file \"%s\" are:\n", destinationFileName);
+  FILE *outputFile = fopen(destinationFileName, "r");
+  if (outputFile != NULL) {
+    char line[1024];
+    while (fgets(line, sizeof(line), outputFile) != NULL) {
+      printf("%s", line);
+    }
+    fclose(outputFile);
+  }
+
+  return 0;
+}
+//to compile -
+//gcc -o lab2q1 lab2q1.c
+ //to run
+ //./lab2q1 3 inputlab2a.txt outputlab2a.txt
