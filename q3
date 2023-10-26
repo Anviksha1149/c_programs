@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+//Rotate right the array A by first 5 elements
+
+void ROTATE_RIGHT(int p1[], int p2) {
+int x=p1[p2-1];
+for(int i=p2-1;i>0;i--){
+    p1[i]=p1[i-1];
+
+}
+p1[0]=x;
+
+
+
+}
+
+int main() {
+    int N;
+    printf("Enter the size of the array: ");
+    scanf("%d", &N);
+
+    int A[100];
+    printf("Enter the elements of the array: ");
+    for (int i = 0; i < N; i++) {
+        scanf("%d", &A[i]);
+    }
+
+    printf("Before ROTATE: ");
+    for (int i = 0; i < N; i++) {
+        printf("%d ", A[i]);
+    }
+
+    ROTATE_RIGHT(A, 5);
+
+    printf("\nAfter ROTATE: ");
+    for (int i = 0; i < N; i++) {
+        printf("%d ", A[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
