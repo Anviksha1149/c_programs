@@ -1,0 +1,29 @@
+//im of the program: Given an array arr[] of size N, find the prefix sum of the array. A prefix 
+//sum array is another array prefixSum[] of the same size, such that the value of prefixSum[i] is 
+//arr[0] + arr[1] + arr[2] . . . arr[i].
+#include<stdio.h>
+#include<stdlib.h>
+int main(){
+    int n;
+    int * p;
+    printf("enter the size of the array\n");
+    scanf("%d",&n);
+    p=(int *)malloc(n*sizeof(int));
+    printf("enter the elements\n");
+    for(int i=0;i<n;i++){
+        scanf("%d",&p[i]);
+    }
+    int q[100];
+    q[0]=p[0];
+    for(int i=1;i<n;i++){
+    q[i]=q[i-1]+p[i];
+    }
+    printf("the prefix array is\n");
+    for(int i=0;i<n;i++){
+        printf("%d ",q[i]);
+    }
+
+
+
+
+}
